@@ -11,7 +11,7 @@ game_on = True
 goal.pensize(15)
 goal.color("red")
 football = Football(0, 0)
-player = Player(0, -height // 2.9, width, height)
+player = Player(5, -height // 2.9, width, height)
 goalkeeper = Goalkeeper(0, height//2.7)
 
 

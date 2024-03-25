@@ -1,5 +1,6 @@
 import turtle
 import time
+import math
 turtle.register_shape("footballer.gif")
 turtle.register_shape("football.gif")
 GRAVITY = 0.001
@@ -36,22 +37,25 @@ class Player(CustomTurtle):
             self.sety(self.window_height // 5)
 
     def fall_down(self):
-        print(f'jumping: {self.jumping}')
+        #print(f'jumping: {self.jumping}')
         if self.jumping:
-            print(f'height reached: {self.ycor() == self.window_height // 5}')
-            print(self.ycor())
-            print(self.window_height // 5)
-            if self.ycor() == self.window_height // 5:
-                time.sleep(2)
-                self.sety(self.y_init)
+            #print(f'height reached: {self.ycor() == self.window_height // 5}')
+            #print(self.ycor())
+           # print(self.window_height // 5)
+            if self.ycor() > self.y_init:
+                self.sety(self.ycor() - 10)
+            if self.ycor() < self.y_init:
                 self.jumping = False
 
 
 
 
-    def on_collision(self, football_velocity, football_direction):
+    def on_collision(self, football_velocity, football_direction, football_x, football_y):
         football_velocity += PLAYER
-        football_direction = (football_direction + 180) % 360
+        angle = math.degrees(math.atan2(football_y - self.ycor(), football_x - self.xcor()))
+        print(angle)
+        football_direction = (football_direction + angle) % 360
+        football_direction = angle
         return football_direction, football_velocity
 
 
@@ -74,5 +78,5 @@ class Football(CustomTurtle):
         self.velocity -= GRAVITY
         self.sety(self.ycor() + self.velocity)
         if self.distance(player) < 20:
-            player.on_collision(self.velocity, self.direction)
+            self.direction, self.velocity = player.on_collision(self.velocity, self.direction, self.xcor(), self.ycor())
 
