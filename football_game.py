@@ -11,7 +11,7 @@ game_on = True
 goal.pensize(15)
 goal.color("red")
 football = Football(0, 0)
-player = Player(0, -height // 2.9)
+player = Player(0, -height // 2.9, width, height)
 goalkeeper = Goalkeeper(0, height//2.7)
 
 
@@ -37,8 +37,12 @@ goal.backward(width//9)
 #def setup_game():
     # goalkeeper:
 
-
+window.onkeypress(player.move_left, "Left")
+window.onkeypress(player.move_right, "Right")
+window.onkeypress(player.jump, "Up")
+window.listen()
 #setup_game()
 while game_on:
-    football.move_gravity()
+    football.move_gravity(player)
+    player.fall_down()
     window.update()
