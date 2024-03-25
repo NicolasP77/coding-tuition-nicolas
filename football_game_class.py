@@ -13,7 +13,7 @@ class CustomTurtle(turtle.Turtle):
         self.shape(shape)
         self.setpos(x, y)
 
-    #collision method
+    #collision method e
 
 class Player(CustomTurtle):
     def __init__(self, x, y, window_width, window_height):
