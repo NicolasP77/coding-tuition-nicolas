@@ -13,7 +13,15 @@ class CustomTurtle(turtle.Turtle):
         self.shape(shape)
         self.setpos(x, y)
 
-    #collision method e
+    def on_collision(self, football_velocity, football_direction, football_x, football_y, constant):
+        football_velocity += constant
+        angle = math.degrees(math.atan2(football_y - self.ycor(), football_x - self.xcor()))
+        # print(angle)
+        football_direction = (angle + 180) % 360
+        # print(angle)
+        # football_direction = angle
+        return football_direction, football_velocity
+    #collision method
 
 class Player(CustomTurtle):
     def __init__(self, x, y, window_width, window_height):
@@ -25,11 +33,11 @@ class Player(CustomTurtle):
 
     def move_right(self):
         if self.xcor() < self.window_width // 2:
-            self.setx(self.xcor() + 1)
+            self.setx(self.xcor() + 3)
 
     def move_left(self):
         if self.xcor() > self.window_width // -2:
-            self.setx(self.xcor() - 1)
+            self.setx(self.xcor() - 3)
 
     def jump(self):
         if not self.jumping:
@@ -43,40 +51,61 @@ class Player(CustomTurtle):
             #print(self.ycor())
            # print(self.window_height // 5)
             if self.ycor() > self.y_init:
-                self.sety(self.ycor() - 10)
+                self.sety(self.ycor() - 3)
             if self.ycor() < self.y_init:
                 self.jumping = False
 
 
 
 
-    def on_collision(self, football_velocity, football_direction, football_x, football_y):
-        football_velocity += PLAYER
-        angle = math.degrees(math.atan2(football_y - self.ycor(), football_x - self.xcor()))
-        print(angle)
-        football_direction = (football_direction + angle) % 360
-        football_direction = angle
-        return football_direction, football_velocity
+
 
 
 
 class Goalkeeper(CustomTurtle):
-    def __init__(self, x, y):
+    def __init__(self, x, y, goal_width):
         super().__init__(y = y, x = x, shape = "square")
         self.color("blue")
         self.shapesize(1, 5)
+        self.goal_width = goal_width
+    def move(self):
+        self.setx(self.xcor() + 0.5)
+        if self.xcor() > self.goal_width // 2:
+            self.setx(-self.goal_width // 2)
+
+
+
 
 
 
 
 class Football(CustomTurtle):
-    def __init__(self, x, y,):
+    def __init__(self, x, y):
         super().__init__(y = y, x = x, shape = "football.gif")
         self.velocity = 0
-        self.direction = 0
-    def move_gravity(self, player):
+        self.direction = 90
+        self.saved = False
+    def move_gravity(self, player, goalkeeper, window_height):
+        if self.ycor() < -window_height // 2:
+            self.sety(0)
+            self.velocity = 0
         self.velocity -= GRAVITY
-        self.sety(self.ycor() + self.velocity)
-        if self.distance(player) < 20:
-            self.direction, self.velocity = player.on_collision(self.velocity, self.direction, self.xcor(), self.ycor())
+        self.sety(self.ycor() + self.velocity * math.sin(math.radians(self.direction)))
+        self.setx(self.xcor() + self.velocity * math.cos(math.radians(self.direction)))
+
+        if self.distance(player) < 50 and self.ycor() > player.ycor():
+            self.direction, self.velocity = player.on_collision(self.velocity, self.direction, self.xcor(), self.ycor(), PLAYER)
+        if self.distance(goalkeeper) < 40:
+            #print(self.direction)
+            self.direction, self.velocity = goalkeeper.on_collision(self.velocity, self.direction, self.xcor(), self.ycor(), PLAYER)
+            #print("save")
+            #print(self.direction)
+
+
+    def goal_scored(self, goal_y, goal_width):
+        if self.ycor() > goal_y and self.xcor() < goal_width // 2 and self.xcor() > -goal_width // 2:
+            goal = True
+        else:
+            goal = False
+        return goal
 

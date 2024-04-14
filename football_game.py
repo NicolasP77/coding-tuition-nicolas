@@ -1,4 +1,5 @@
 import turtle
+import time
 from football_game_class import *
 window = turtle.Screen()
 window.tracer(0)
@@ -12,10 +13,11 @@ goal.pensize(15)
 goal.color("red")
 football = Football(0, 0)
 player = Player(5, -height // 2.9, width, height)
-goalkeeper = Goalkeeper(0, height//2.7)
-
-
-
+goalkeeper = Goalkeeper(0, height//2.7, width//2.2)
+score = 0
+writer = turtle.Turtle()
+writer.hideturtle()
+writer.penup()
 #window.register_shape("footballer.gif")
 #player.shape("footballer.gif")
 
@@ -43,6 +45,22 @@ window.onkeypress(player.jump, "Up")
 window.listen()
 #setup_game()
 while game_on:
-    football.move_gravity(player)
+    football.move_gravity(player, goalkeeper, height)
     player.fall_down()
     window.update()
+    goalkeeper.move()
+
+    if football.goal_scored(height // 2.2, width//3):
+        score += 1
+        writer.clear()
+        writer.write(score, font=("arial", 15))
+        football.setposition(0, 0)
+        player.setposition(5, -height // 2.9)
+        goalkeeper.setposition(0, height // 2.7)
+        #time.sleep(2)
+        football.velocity = 0
+        football.direction = 90
+
+
+
+
