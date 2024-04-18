@@ -45,7 +45,7 @@ window.onkeypress(player.jump, "Up")
 window.listen()
 #setup_game()
 while game_on:
-    football.move_gravity(player, goalkeeper, height)
+    football.move_gravity(player, goalkeeper, height, width)
     player.fall_down()
     window.update()
     goalkeeper.move()

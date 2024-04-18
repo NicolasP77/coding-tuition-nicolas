@@ -4,7 +4,7 @@ import math
 turtle.register_shape("footballer.gif")
 turtle.register_shape("football.gif")
 GRAVITY = 0.001
-PLAYER = 0.1
+PLAYER = 0.2
 
 class CustomTurtle(turtle.Turtle):
     def __init__(self, x, y, shape):
@@ -85,10 +85,14 @@ class Football(CustomTurtle):
         self.velocity = 0
         self.direction = 90
         self.saved = False
-    def move_gravity(self, player, goalkeeper, window_height):
+    def move_gravity(self, player, goalkeeper, window_height, window_width):
         if self.ycor() < -window_height // 2:
             self.sety(0)
+            self.setx(0)
             self.velocity = 0
+            self.direction = 90
+        if self.xcor() < -window_width // 2 or self.xcor() > window_width // 2:
+            self.velocity =(-self.velocity)
         self.velocity -= GRAVITY
         self.sety(self.ycor() + self.velocity * math.sin(math.radians(self.direction)))
         self.setx(self.xcor() + self.velocity * math.cos(math.radians(self.direction)))
